@@ -9,6 +9,7 @@ attribute vec2 a_TexCoord;
 varying vec4 v_color;
 varying vec2 v_TexCoord;
 
+uniform float mcolor;
 uniform mat4 u_matrix;
 uniform mat4 p_matrix;
 uniform vec4 ambientProduct, diffuseProduct, specularProduct;
@@ -32,6 +33,8 @@ void main()
 	vec4 ambient = ambientProduct;
 	float Kd = max( dot(L, N), 0.0 );
 	vec4 diffuse = Kd*vec4(a_color,1.0);
+	if(mcolor == 1.0)
+		diffuse = Kd*vec4(0.8,0.8,0.8,1.0);
 	float Ks = pow( max(dot(N, H), 0.0), shininess );
 	vec4 specular = Ks * specularProduct;
 	if( dot(L, N) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
@@ -80,6 +83,7 @@ var normalLocation = gl.getAttribLocation(program, "a_normal");
 var matrixLocation = gl.getUniformLocation(program, 'u_matrix')
 var u_Sampler = gl.getUniformLocation(program, 'u_Sampler')
 var u_decide = gl.getUniformLocation(program, 'decide')
+var u_mcolor = gl.getUniformLocation(program, 'mcolor')
 var a_TexCoord = gl.getAttribLocation(program, 'a_TexCoord')
 var viewProjectionLocation = gl.getUniformLocation(program, "p_matrix");
 
@@ -720,7 +724,7 @@ function drawSceneIndex() {
 	bilibili_directZ = m4.transformNormal(mvMatrix, bilibili_directZ);
 	gl.uniformMatrix4fv(matrixLocation, false, mvMatrix);
 
-
+	gl.enableVertexAttribArray(normalLocation);
 	gl.bindBuffer(gl.ARRAY_BUFFER, bilibili_obj.normalBuffer);
 	var size = 3;
 	var type = gl.FLOAT;
@@ -728,10 +732,11 @@ function drawSceneIndex() {
 	var stride = 0;
 	var offset = 0;
 	gl.vertexAttribPointer(normalLocation, size, type, normalize, stride, offset);
-	gl.enableVertexAttribArray(normalLocation);
+
 
 
 	//顶点数据buffer
+	gl.enableVertexAttribArray(positionLocation);
 	gl.bindBuffer(gl.ARRAY_BUFFER, bilibili_obj.vertexBuffer);
 	var size = 3;
 	var type = gl.FLOAT;
@@ -739,16 +744,22 @@ function drawSceneIndex() {
 	var stride = 0;
 	var offset = 0;
 	gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
-	gl.enableVertexAttribArray(positionLocation);
 
 
-	u_decide = 1;
+
+	u_mcolor = 1.0;
+	gl.uniform1f(gl.getUniformLocation(program, "mcolor"), u_mcolor);
+
+
+	u_decide = 1.0;
 	
 	gl.uniform1f(gl.getUniformLocation(program, "decide"), u_decide);
 
 	gl.drawArrays(gl.TRIANGLES, 0, bilibili_textpo.length);
 
 
+	u_mcolor = 0.0;
+	gl.uniform1f(gl.getUniformLocation(program, "mcolor"), u_mcolor);
 
 	// 绘制 bilibili2
 
@@ -777,12 +788,12 @@ function drawSceneIndex() {
 	
 		let current_obj_texture = get_texture_for_obj(piTemp[i])
 
-		if(piTemp[i].mtl_info.map_Kd == "pikagen.png")
-		{
-			u_decide = 3;
+		// if(piTemp[i].mtl_info.map_Kd == "pikagen.png")
+		// {
+		// 	u_decide = 2;
 		
-			gl.uniform1f(gl.getUniformLocation(program, "decide"), u_decide);
-		}
+		// 	gl.uniform1f(gl.getUniformLocation(program, "decide"), u_decide);
+		// }
 	
 		bilibili2_convertData()
 	
