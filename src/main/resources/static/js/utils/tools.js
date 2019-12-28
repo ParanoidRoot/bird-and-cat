@@ -2,11 +2,11 @@ function initVertexBuffers(gl, vertices, color) {
    var vertexBuffer = gl.createBuffer();
    var colorBuffer = gl.createBuffer();
    if (!vertexBuffer) {
-         console.log('Failed to create vertexBuffer object');
+         console.log('Failed to create vertex_buffer object');
          return -1;
    }
    if (!colorBuffer) {
-      console.log('Failed to create colorBuffer object');
+      console.log('Failed to create color_buffer object');
       return -1;
 }
    var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
