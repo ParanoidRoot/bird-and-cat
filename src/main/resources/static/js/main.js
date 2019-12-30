@@ -123,11 +123,11 @@ patrick_obj.color_buffer = gl.createBuffer();
 patrick_obj.normal_buffer = gl.createBuffer();
 patrick_obj.texture_buffer = gl.createBuffer();
 
-let patrick_center_vec3 = [300, 200, 50];
+let patrick_center_vec3 = [0, 0, 0];
 let patrick_direct_z_vec4 = [0, 1, 0, 1];
 let patrick_translation_vec3 = [350, 0, -600];
 let patrick_rotation_vec3 = [degToRad(0), degToRad(0), degToRad(0)];
-let patrick_scale_vec3 = [1, 1, 1];
+let patrick_scale_vec3 = [0.8, 0.8, 0.8];
 let patrick_view_radians = degToRad(100);
 
 let patrick_colors = [];
@@ -153,7 +153,7 @@ let pikaqiu_center_vec3 = [0, 0, 0];
 let pikaqiu_direct_z_vec4 = [0, 1, 0, 1];
 let pikaqiu_translation_vec3 = [-300, 75, -400];
 let pikaqiu_rotation_vec3 = [degToRad(0), degToRad(0), degToRad(0)];
-let pikaqiu_scale_vec3 = [1, 1, 1];
+let pikaqiu_scale_vec3 = [0.8, 0.8, 0.8];
 let pikaqiu_view_radians = degToRad(100);  // TODO 这里好像没有用到??? 但是派大星的是用到了
 
 let pikaqiu_colors = [];
@@ -188,9 +188,9 @@ light_ball_obj.vertex_buffer = gl.createBuffer();
 light_ball_obj.index_buffer = gl.createBuffer();
 light_ball_obj.color_buffer = gl.createBuffer();
 light_ball_obj.normal_buffer = gl.createBuffer();
-let light_ball_center_vec3 = lightPosition;
+let light_ball_center_vec3 = [0, 0, 0];
 let light_ball_direct_z_vec4 = [0, 0, 1, 1];
-let light_ball_translation_vec3 = [0, 0, 0];
+let light_ball_translation_vec3 = lightPosition;
 let light_ball_rotation_vec3 = [degToRad(0), degToRad(0), degToRad(0)];
 let light_ball_scale_vec3 = [0.1, 0.1, 0.1];
 
@@ -205,16 +205,33 @@ light_ball_convert_data_to_buffer();
 let g_last = Date.now();
 let ANGLE_STEP = 45.0;
 let JUMP_STEP = 10000000.0;
+
 let isUp = true;
 let isDown = false;
+let pikaqiu_translation_0 = [0, 0, 0];
+pikaqiu_translation_0[0] = pikaqiu_translation_vec3[0];
+pikaqiu_translation_0[1] = pikaqiu_translation_vec3[1];
+pikaqiu_translation_0[2] = pikaqiu_translation_vec3[2];
+let pikaqiu_rotation0 = [0, 0, 0];
+pikaqiu_rotation0[0] = pikaqiu_rotation_vec3[0];
+pikaqiu_rotation0[1] = pikaqiu_rotation_vec3[1];
+pikaqiu_rotation0[2] = pikaqiu_rotation_vec3[2];
+let pikaqiu_step1 = true;
+
 let isUp2 = true;
 let isDown2 = false;
-let requestAnimationId = 1;  // 用来删除相机
-let requestAnimationId2 = 1;  // 用来删除动画
-let isAlive = false;  // 是否在动
-let forward = true;  //向前跳
+let patrick_translation_0 = [0, 0, 0];
+patrick_translation_0[0] = patrick_translation_vec3[0];
+patrick_translation_0[1] = patrick_translation_vec3[1];
+patrick_translation_0[2] = patrick_translation_vec3[2];
+let patrick_rotation0 = [0, 0, 0];
+patrick_rotation0[0] = patrick_rotation_vec3[0];
+patrick_rotation0[1] = patrick_rotation_vec3[1];
+patrick_rotation0[2] = patrick_rotation_vec3[2];
+let patrick_move_decide = true;
+
+let isAlive = true;  // 是否在动
 let tick = function () {
-	cameraAngleRadians = animateCamera(cameraAngleRadians); // Update the rotation angle
 	animate_patrick();
 	requestAnimationId = requestAnimationFrame(tick, canvas); // Request that the
 	drawSceneIndex();
@@ -237,56 +254,117 @@ function animateCamera(angle) {
 }
 
 function animate_patrick() {
+
 	if (isAlive) {
-		let now = Date.now();
-		let elapsed = now - g_last;
-		g_last = now;
-		// xfj 轴跳跃
-		if (isUp) {
-			pikaqiu_translation_vec3[1] = pikaqiu_translation_vec3[1] + (
-				JUMP_STEP
-			) / 1000000.0
-		}
-		if (isDown) {
-			pikaqiu_translation_vec3[1] = pikaqiu_translation_vec3[1] - (
-				JUMP_STEP
-			) / 1000000.0
-		}
-		if (pikaqiu_translation_vec3[1] <= 75) {
-			isUp = true;
-			isDown = false;
-		}
-		if (pikaqiu_translation_vec3[1] >= 300) {
-			isUp = false;
-			isDown = true;
-		}
 
-		if (isUp2) {
-			let angleInDegrees = 20;
-			let angleInRadians = angleInDegrees * Math.PI / 180;
-			patrick_rotation_vec3[2] += angleInRadians % 360;
-		}
+		if (patrick_move_decide) {
+			if (patrick_rotation_vec3[1] - patrick_rotation0[1] < 45 * Math.PI
+				/ 180) {
+				patrick_rotation_vec3[1] = patrick_rotation_vec3[1] + 5
+					* Math.PI
+					/ 180;
+			} else if ((patrick_translation_vec3[0] - patrick_translation_0[0]
+				< 200 * patrick_direct_z_vec4[0] && patrick_direct_z_vec4[0]
+				> 0) ||
+				(patrick_translation_vec3[0] - patrick_translation_0[0] > 200
+					* patrick_direct_z_vec4[0] && patrick_direct_z_vec4[0]
+					< 0)) {
+				patrick_translation_vec3[0] = patrick_translation_vec3[0] + 10
+					* patrick_direct_z_vec4[0];
+				patrick_translation_vec3[1] = patrick_translation_vec3[1] + 10
+					* patrick_direct_z_vec4[1];
+				patrick_translation_vec3[2] = patrick_translation_vec3[2] + 10
+					* patrick_direct_z_vec4[2];
+			} else {
+				patrick_move_decide = false;
+				patrick_translation_0[0] = patrick_translation_vec3[0];
+				patrick_translation_0[1] = patrick_translation_vec3[1];
+				patrick_translation_0[2] = patrick_translation_vec3[2];
+				patrick_rotation0[0] = patrick_rotation_vec3[0];
+				patrick_rotation0[1] = patrick_rotation_vec3[1];
+				patrick_rotation0[2] = patrick_rotation_vec3[2];
+			}
 
-		if (forward) {
-			pikaqiu_translation_vec3[0] += 7 * pikaqiu_direct_z_vec4[0];
-			pikaqiu_translation_vec3[1] += 7 * pikaqiu_direct_z_vec4[1];
-			pikaqiu_translation_vec3[2] += 7 * pikaqiu_direct_z_vec4[2];
-			console.log(pikaqiu_translation_vec3[2])
 		} else {
-			pikaqiu_translation_vec3[0] += 7 * pikaqiu_direct_z_vec4[0];
-			pikaqiu_translation_vec3[1] += 7 * pikaqiu_direct_z_vec4[1];
-			pikaqiu_translation_vec3[2] += 7 * pikaqiu_direct_z_vec4[2];
-			console.log(pikaqiu_translation_vec3[2])
+			if (patrick_rotation_vec3[1] - patrick_rotation0[1] < 90 * Math.PI
+				/ 180) {
+				patrick_rotation_vec3[1] = patrick_rotation_vec3[1] + 5
+					* Math.PI / 180;
+
+			} else if ((patrick_translation_vec3[0] - patrick_translation_0[0]
+				< 200 * patrick_direct_z_vec4[0] && patrick_direct_z_vec4[0]
+				> 0) ||
+				(patrick_translation_vec3[0] - patrick_translation_0[0] > 200
+					* patrick_direct_z_vec4[0] && patrick_direct_z_vec4[0]
+					< 0)) {
+				patrick_translation_vec3[0] = patrick_translation_vec3[0] + 10
+					* patrick_direct_z_vec4[0];
+				patrick_translation_vec3[1] = patrick_translation_vec3[1] + 10
+					* patrick_direct_z_vec4[1];
+				patrick_translation_vec3[2] = patrick_translation_vec3[2] + 10
+					* patrick_direct_z_vec4[2];
+			} else {
+				patrick_translation_0[0] = patrick_translation_vec3[0];
+				patrick_translation_0[1] = patrick_translation_vec3[1];
+				patrick_translation_0[2] = patrick_translation_vec3[2];
+				patrick_rotation0[0] = patrick_rotation_vec3[0];
+				patrick_rotation0[1] = patrick_rotation_vec3[1];
+				patrick_rotation0[2] = patrick_rotation_vec3[2];
+			}
 		}
-		if (pikaqiu_translation_vec3[2] >= -100) {
-			forward = true;
-			let angleInDegrees = 180;
-			pikaqiu_rotation_vec3[1] = angleInDegrees * Math.PI / 180;
-		}
-		if (pikaqiu_translation_vec3[2] <= -1000) {
-			forward = false;
-			let angleInDegrees = 0;
-			pikaqiu_rotation_vec3[1] = angleInDegrees * Math.PI / 180;
+
+		if (pikaqiu_step1) {
+			if (pikaqiu_translation_vec3[2] - pikaqiu_translation_0[2] < 200) {
+				pikaqiu_translation_vec3[2] += 5;
+			} else if (pikaqiu_rotation_vec3[1] - pikaqiu_rotation0[1] < 90
+				* Math.PI
+				/ 180) {
+				pikaqiu_rotation_vec3[1] = pikaqiu_rotation_vec3[1] + 5
+					* Math.PI
+					/ 180;
+			} else if (pikaqiu_translation_vec3[0] - pikaqiu_translation_0[0]
+				< 200) {
+				pikaqiu_translation_vec3[0] += 5;
+			} else {
+				pikaqiu_step1 = false;
+				pikaqiu_translation_0[0] = pikaqiu_translation_vec3[0];
+				pikaqiu_translation_0[1] = pikaqiu_translation_vec3[1];
+				pikaqiu_translation_0[2] = pikaqiu_translation_vec3[2];
+				pikaqiu_rotation0[0] = pikaqiu_rotation_vec3[0];
+				pikaqiu_rotation0[1] = pikaqiu_rotation_vec3[1];
+				pikaqiu_rotation0[2] = pikaqiu_rotation_vec3[2];
+			}
+		} else {
+			if (pikaqiu_rotation_vec3[1] - pikaqiu_rotation0[1] < 90 * Math.PI
+				/ 180) {
+				pikaqiu_rotation_vec3[1] = pikaqiu_rotation_vec3[1] + 5
+					* Math.PI
+					/ 180;
+			} else if (pikaqiu_translation_0[2] - pikaqiu_translation_vec3[2]
+				< 200) {
+				pikaqiu_translation_vec3[2] -= 5;
+			} else if (pikaqiu_rotation_vec3[1] - pikaqiu_rotation0[1] < 180
+				* Math.PI / 180) {
+				pikaqiu_rotation_vec3[1] = pikaqiu_rotation_vec3[1] + 5
+					* Math.PI
+					/ 180;
+			} else if (-pikaqiu_translation_vec3[0] + pikaqiu_translation_0[0]
+				< 200) {
+				pikaqiu_translation_vec3[0] -= 5;
+			} else if (pikaqiu_rotation_vec3[1] - pikaqiu_rotation0[1] < 270
+				* Math.PI / 180) {
+				pikaqiu_rotation_vec3[1] = pikaqiu_rotation_vec3[1] + 5
+					* Math.PI
+					/ 180;
+			} else {
+				pikaqiu_step1 = true;
+				pikaqiu_translation_0[0] = pikaqiu_translation_vec3[0];
+				pikaqiu_translation_0[1] = pikaqiu_translation_vec3[1];
+				pikaqiu_translation_0[2] = pikaqiu_translation_vec3[2];
+				pikaqiu_rotation0[0] = pikaqiu_rotation_vec3[0];
+				pikaqiu_rotation0[1] = pikaqiu_rotation_vec3[1];
+				pikaqiu_rotation0[2] = pikaqiu_rotation_vec3[2];
+			}
 		}
 	}
 }
@@ -488,15 +566,6 @@ function onKeyDown(event) {
 			/ 180;
 	}
 
-	//+
-	if (event.keyCode === 187) {
-		cameraAngleRadians = degToRad(radToDeg(cameraAngleRadians) + 10);
-	}
-	//-
-	if (event.keyCode === 189) {
-		cameraAngleRadians = degToRad(radToDeg(cameraAngleRadians) - 10);
-	}
-
 	//1
 	if (event.keyCode === 97) {
 		patrick_scale_vec3[0] = patrick_scale_vec3[0] - 0.01;
@@ -525,58 +594,81 @@ function onKeyDown(event) {
 		pikaqiu_scale_vec3[2] = pikaqiu_scale_vec3[0];
 	}
 
-	//7
-	if (event.keyCode === 103) {
-		lightPosition[0] += 10;
-		light_ball_center_vec3[0] += 10;
-		gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
-			new Float32Array(lightPosition));
-	}
-
-	//8
-	if (event.keyCode === 104) {
-		lightPosition[1] += 10;
-		light_ball_center_vec3[1] += 10;
-		gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
-			new Float32Array(lightPosition));
-	}
-
-	//9
-	if (event.keyCode === 105) {
-		lightPosition[2] += 10;
-		light_ball_center_vec3[2] += 10;
-		gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
-			new Float32Array(lightPosition));
-	}
-
-	//u
-	if (event.keyCode === 85) {
-		lightPosition[0] -= 10;
-		light_ball_center_vec3[0] -= 10;
-		gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
-			new Float32Array(lightPosition));
-	}
-
-	//i
-	if (event.keyCode === 73) {
-		lightPosition[1] -= 10;
-		light_ball_center_vec3[1] -= 10;
-		gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
-			new Float32Array(lightPosition));
-	}
-
-	//o
-	if (event.keyCode === 79) {
-		lightPosition[2] -= 10;
-		light_ball_center_vec3[2] -= 10;
-		gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
-			new Float32Array(lightPosition));
-	}
-
 	if (event.keyCode === 96) {
 		isDecide = !isDecide;
 	}
 }
+
+document.getElementById("Button0").onclick = function () {
+	lightPosition[0] += 10;
+	light_ball_translation_vec3[0] = lightPosition[0];
+	gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
+		new Float32Array(lightPosition));
+};
+
+document.getElementById("Button1").onclick = function () {
+	lightPosition[0] -= 10;
+	light_ball_translation_vec3[0] = lightPosition[0];
+	gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
+		new Float32Array(lightPosition));
+};
+
+document.getElementById("Button2").onclick = function () {
+	lightPosition[1] += 10;
+	light_ball_translation_vec3[1] = lightPosition[1];
+	gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
+		new Float32Array(lightPosition));
+};
+
+document.getElementById("Button3").onclick = function () {
+	lightPosition[1] -= 10;
+	light_ball_translation_vec3[1] = lightPosition[1];
+	gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
+		new Float32Array(lightPosition));
+};
+
+document.getElementById("Button4").onclick = function () {
+	lightPosition[2] += 10;
+	light_ball_translation_vec3[2] = lightPosition[2];
+	gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
+		new Float32Array(lightPosition));
+};
+
+document.getElementById("Button5").onclick = function () {
+	lightPosition[2] -= 10;
+	light_ball_translation_vec3[2] = lightPosition[2];
+	gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
+		new Float32Array(lightPosition));
+};
+
+document.getElementById("Button6").onclick = function () {
+	cameraAngleRadians = degToRad(radToDeg(cameraAngleRadians) + 10);
+};
+document.getElementById("Button7").onclick = function () {
+	cameraAngleRadians = degToRad(radToDeg(cameraAngleRadians) - 10);
+};
+
+document.getElementById("Button8").onclick = function () {
+	patrick_scale_vec3[0] = patrick_scale_vec3[0] + 0.01;
+	patrick_scale_vec3[1] = patrick_scale_vec3[0];
+	patrick_scale_vec3[2] = patrick_scale_vec3[0];
+};
+document.getElementById("Button9").onclick = function () {
+	patrick_scale_vec3[0] = patrick_scale_vec3[0] - 0.01;
+	patrick_scale_vec3[1] = patrick_scale_vec3[0];
+	patrick_scale_vec3[2] = patrick_scale_vec3[0];
+};
+
+document.getElementById("Button10").onclick = function () {
+	pikaqiu_scale_vec3[0] = pikaqiu_scale_vec3[0] + 0.01;
+	pikaqiu_scale_vec3[1] = pikaqiu_scale_vec3[0];
+	pikaqiu_scale_vec3[2] = pikaqiu_scale_vec3[0];
+};
+document.getElementById("Button11").onclick = function () {
+	pikaqiu_scale_vec3[0] = pikaqiu_scale_vec3[0] - 0.01;
+	pikaqiu_scale_vec3[1] = pikaqiu_scale_vec3[0];
+	pikaqiu_scale_vec3[2] = pikaqiu_scale_vec3[0];
+};
 
 function drawSceneIndex() {
 	webglUtils.resizeCanvasToDisplaySize(gl.canvas);
@@ -919,7 +1011,7 @@ function drawSceneIndex() {
 	ground_direct_z_vec4 = [0, 0, 1, 1];
 	ground_direct_z_vec4 = m4.transformNormal(mvMatrix, ground_direct_z_vec4);
 
-	u_decide = 0;
+	u_decide = 4;
 
 	gl.uniform1f(gl.getUniformLocation(program, "decide"), u_decide);
 
@@ -981,14 +1073,14 @@ function init_ground() {
 	];
 
 	ground_colors = [
-		0, 1, 0, 1, 1, 0,
-		0, 1, 0, 1, 1, 0,
-		0, 1, 0, 1, 1, 0,
-		0, 1, 0, 1, 1, 0,
-		0, 1, 0, 1, 1, 0,
-		0, 1, 0, 1, 1, 0,
-		0, 1, 0, 1, 1, 0,
-		0, 1, 0, 1, 1, 0,
+		0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0
 	]
 
 }
