@@ -89,7 +89,7 @@ let viewProjectionLocation = gl.getUniformLocation(program, "p_matrix");
 
 let isDecide = true;
 
-let lightPosition = [1.0, 1.0, 1.0, 1.0];
+let lightPosition = [246.0, 1.0, -594.0, 1.0];
 
 let lightAmbient = [0.2, 0.2, 0.2, 1.0];
 let lightDiffuse = [1.0, 1.0, 1.0, 1.0];
@@ -536,7 +536,6 @@ function onKeyDown(event) {
 	}
 	//DOWN
 	if (event.keyCode === 40) {
-
 		pikaqiu_translation_vec3[0] = pikaqiu_translation_vec3[0] - 10
 			* pikaqiu_direct_z_vec4[0];
 		pikaqiu_translation_vec3[1] = pikaqiu_translation_vec3[1] - 10
@@ -599,43 +598,124 @@ function onKeyDown(event) {
 	}
 }
 
+let light_position_delta = 35;
+
+document.getElementById("isAlive").onclick = function() {
+	isAlive = !isAlive
+};
+
+document.getElementById("pikaqiuForward").onclick = function() {
+	pikaqiu_translation_vec3[0] = pikaqiu_translation_vec3[0] + 10
+		* pikaqiu_direct_z_vec4[0];
+	pikaqiu_translation_vec3[1] = pikaqiu_translation_vec3[1] + 10
+		* pikaqiu_direct_z_vec4[1];
+	pikaqiu_translation_vec3[2] = pikaqiu_translation_vec3[2] + 10
+		* pikaqiu_direct_z_vec4[2];
+};
+
+document.getElementById("pikaqiuBackward").onclick = function() {
+	pikaqiu_translation_vec3[0] = pikaqiu_translation_vec3[0] - 10
+		* pikaqiu_direct_z_vec4[0];
+	pikaqiu_translation_vec3[1] = pikaqiu_translation_vec3[1] - 10
+		* pikaqiu_direct_z_vec4[1];
+	pikaqiu_translation_vec3[2] = pikaqiu_translation_vec3[2] - 10
+		* pikaqiu_direct_z_vec4[2];
+};
+
+document.getElementById("pikaqiuLeft").onclick = function() {
+	pikaqiu_translation_vec3[0] = pikaqiu_translation_vec3[0] - 10;
+};
+
+document.getElementById("pikaqiuRight").onclick = function() {
+	pikaqiu_translation_vec3[0] = pikaqiu_translation_vec3[0] + 10;
+};
+
+document.getElementById("pikaqiuRotate1").onclick = function() {
+	pikaqiu_rotation_vec3[1] = pikaqiu_rotation_vec3[1] - 10 * Math.PI
+		/ 180;
+};
+
+
+document.getElementById("pikaqiuRotate2").onclick = function() {
+	pikaqiu_rotation_vec3[1] = pikaqiu_rotation_vec3[1] + 10 * Math.PI
+		/ 180;
+};
+
+document.getElementById("patrickForward").onclick = function() {
+	patrick_translation_vec3[0] = patrick_translation_vec3[0] + 10
+		* patrick_direct_z_vec4[0];
+	patrick_translation_vec3[1] = patrick_translation_vec3[1] + 10
+		* patrick_direct_z_vec4[1];
+	patrick_translation_vec3[2] = patrick_translation_vec3[2] + 10
+		* patrick_direct_z_vec4[2];
+};
+
+document.getElementById("patrickBackward").onclick = function() {
+	patrick_translation_vec3[0] = patrick_translation_vec3[0] - 10
+		* patrick_direct_z_vec4[0];
+	patrick_translation_vec3[1] = patrick_translation_vec3[1] - 10
+		* patrick_direct_z_vec4[1];
+	patrick_translation_vec3[2] = patrick_translation_vec3[2] - 10
+		* patrick_direct_z_vec4[2];
+};
+
+document.getElementById("patrickLeft").onclick = function() {
+	patrick_translation_vec3[0] = patrick_translation_vec3[0] - 10;
+};
+
+document.getElementById("patrickRight").onclick = function() {
+	patrick_translation_vec3[0] = patrick_translation_vec3[0] + 10;
+};
+
+document.getElementById("patrickRotate1").onclick = function() {
+	patrick_rotation_vec3[1] = patrick_rotation_vec3[1] - 10 * Math.PI
+		/ 180;
+};
+
+
+document.getElementById("patrickRotate2").onclick = function() {
+	patrick_rotation_vec3[1] = patrick_rotation_vec3[1] + 10 * Math.PI
+		/ 180;
+};
+
+
 document.getElementById("Button0").onclick = function () {
-	lightPosition[0] += 10;
+	lightPosition[0] += light_position_delta;
 	light_ball_translation_vec3[0] = lightPosition[0];
 	gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
 		new Float32Array(lightPosition));
 };
 
 document.getElementById("Button1").onclick = function () {
-	lightPosition[0] -= 10;
+	lightPosition[0] -= light_position_delta;
 	light_ball_translation_vec3[0] = lightPosition[0];
 	gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
 		new Float32Array(lightPosition));
 };
 
 document.getElementById("Button2").onclick = function () {
-	lightPosition[1] += 10;
+	lightPosition[1] += light_position_delta;
 	light_ball_translation_vec3[1] = lightPosition[1];
 	gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
 		new Float32Array(lightPosition));
 };
 
 document.getElementById("Button3").onclick = function () {
-	lightPosition[1] -= 10;
+	lightPosition[1] -= light_position_delta;
 	light_ball_translation_vec3[1] = lightPosition[1];
 	gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
 		new Float32Array(lightPosition));
 };
 
 document.getElementById("Button4").onclick = function () {
-	lightPosition[2] += 10;
+	lightPosition[2] += light_position_delta;
 	light_ball_translation_vec3[2] = lightPosition[2];
 	gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
 		new Float32Array(lightPosition));
 };
 
 document.getElementById("Button5").onclick = function () {
-	lightPosition[2] -= 10;
+	lightPosition[2] -= light_position_delta;
 	light_ball_translation_vec3[2] = lightPosition[2];
 	gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"),
 		new Float32Array(lightPosition));
